@@ -1,0 +1,18 @@
+{
+    "android": {
+        "debug": {
+            "keystore": "../Keys/MyKey1.jks",
+            "storePassword": "Pavitra14",
+            "alias": "key0",
+            "password" : "Pavitra14",
+            "keystoreType": ""
+        },
+        "release": {
+            "keystore": "../Keys/MyKey1.jks",
+            "storePassword": "Pavitra14",
+            "alias": "key0",
+            "password" : "Pavitra14",
+            "keystoreType": ""
+        }
+    }
+}

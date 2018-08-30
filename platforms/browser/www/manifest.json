@@ -1,0 +1,12 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "MedHelper",
+  "short_name": "MedHelper",
+  "version": "com.pbehre.medsearch",
+  "description": "An application by Team Vijith",
+  "author": "Team Vijith",
+  "icons": [],
+  "start_url": "index.html",
+  "theme_color": "#2196f3"
+}
