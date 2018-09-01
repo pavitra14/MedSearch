@@ -1,19 +1,40 @@
+var rank="";
+var sub="";
+var sub_price="";
+if (localStorage.getItem("LocalData") == null) {
+  var data = [];
+  data = JSON.stringify(data);
+  localStorage.setItem("LocalData", data);
+}
 //custom URL plugin code
 function handleOpenURL(url) {
   var qr = url.slice(8);
   //alert(qr);
+  if (localStorage.getItem("LocalData") == null) {
+    var data = [];
+    data = JSON.stringify(data);
+    localStorage.setItem("LocalData", data);
+  }
   var data = localStorage.getItem("LocalData");
   data = JSON.parse(data);
   data[data.length] = [moment().format('lll'), qr];
   localStorage.setItem("LocalData", JSON.stringify(data));
-  location.href = '/prescriptions/';
+  a.fetchPresData(JSON.stringify(data));
+  app.f7.router.navigate({
+    url: '/prescriptions/'
+  });
 }
+
 
 jQuery.noConflict();
 // jQuery Code
 jQuery(document).ready(function () {
+  //Hide the search Results
+  jQuery('#results').hide();
+  jQuery('#results2').hide();
+
   // Init F7 Vue Plugin
-  Vue.use(Framework7Vue, Framework7)
+  Vue.use(Framework7Vue, Framework7);
 
   // Init Page Components
   Vue.component('page-about', {
@@ -28,9 +49,28 @@ jQuery(document).ready(function () {
   Vue.component('page-not-found', {
     template: '#page-not-found'
   });
-
+  //Routes for the application
+  var routes = [{
+      path: '/about/',
+      component: 'page-about'
+    },
+    {
+      name: 'prescriptions',
+      path: '/prescriptions/',
+      component: 'prescriptions'
+    },
+    {
+      name: 'sih_login',
+      path: '/login/',
+      url: 'https://sih.pbehre.in/'
+    },
+    {
+      path: '(.*)',
+      component: 'page-not-found',
+    },
+  ];
   // Init App
-  new Vue({
+  var a = new Vue({
     el: '#app',
     // Init Framework7 by passing parameters here
     framework7: {
@@ -39,23 +79,12 @@ jQuery(document).ready(function () {
       name: 'MedSearch', // App name
       theme: 'auto', // Automatic theme detection
       // App routes
-      routes: [{
-          path: '/about/',
-          component: 'page-about'
-        },
-        {
-          path: '/prescriptions/',
-          component: 'prescriptions'
-        },
-        {
-          path: '(.*)',
-          component: 'page-not-found',
-        },
-      ],
+      routes: routes,
     },
     methods: {
-      greet: function (event) {
+      greet: function () {
         alert('Hello, World!')
+        // console.log(cordova.plugins);
       },
       scanNow: function (event) {
         cordova.plugins.barcodeScanner.scan(
@@ -66,13 +95,26 @@ jQuery(document).ready(function () {
               //       "Format: " + result.format + "\n" +
               //       "Cancelled: " + result.cancelled);
               var value = result.text;
+              if (localStorage.getItem("LocalData") == null) {
+                var data = [];
+                data = JSON.stringify(data);
+                localStorage.setItem("LocalData", data);
+              }
               var data = localStorage.getItem("LocalData");
-              data = JSON.parse(data);
-
-              data[data.length] = [moment().format('lll'), value];
+             
+              // if(data != null) {
+              //   data = JSON.parse(data);
+              // } else {
+              //   data = JSON.parse("[]");
+              // }
+              data = JSON.parse(data);             
+              data[data.length] = [moment().format('lll'), value];              
               localStorage.setItem("LocalData", JSON.stringify(data));
-              //alert("Scan successful ");
-              location.href = '/prescriptions/'; //Change this
+              alert("Scan successful, fetching data. ");
+              a.fetchPresData(JSON.stringify(data));
+              app.f7.router.navigate({
+                url: '/prescriptions/'
+              });
             }
           },
           function (error) {
@@ -91,6 +133,69 @@ jQuery(document).ready(function () {
             disableSuccessBeep: true // iOS and Android
           }
         );
+      },
+      openLogin: function (event) {
+        cordova.InAppBrowser.open('https://sih.pbehre.in/login.php', '_blank', 'location=yes');
+      },
+      fetchPresData: function (data) {
+        console.log(data);
+        data = JSON.parse(data);
+    
+        var html = "";
+
+        for(var count1 = 0; count1 < data.length; count1++)
+        {
+            var qrcode=data[count1][1];//store the qr code in this variable as a string
+            var requestUrl="https://sih.pbehre.in/api/v2/qrcode/"+qrcode;
+            jQuery.ajax({
+              type: "GET",
+              crossdomain: true,
+              url: requestUrl,
+              data: data,
+              success: function(response) {
+                console.log(response);
+              },
+              error: function(err) {
+                console.log("fetchPresData AJAX failed : " + err);
+              }
+            });
+
+        }
+
+      },
+      findAhead: function(){
+        var sub = jQuery('input:radio[name=sub_ahead]:checked').closest('td').next('td').map(function(){
+          return jQuery(this).text();
+        }).get();
+        var sub_price = jQuery('input:radio[name=sub_ahead]:checked').closest('td').next('td').next('td').map(function(){
+          return jQuery(this).text();
+        }).get();
+        jQuery.ajax({
+          type: "GET",
+          crossdomain: true,
+          url: "https://sih.pbehre.in/api/v3/findAhead/"+sub,
+          data: {key: sub},
+          success: function(response){
+            data = showObject(response);
+            console.log(data);
+            var html = "";
+            for(var i=0; i<data.length; i++){
+              var storeName = data[i][0]['name'] + ", ";
+              var storeAdd = data[i][0]['address'] + ", India";
+              var full_add = storeName + storeAdd;
+
+              html +="<tr><td><label class='radio'><input type='radio' name='stores_ahead'><i class='icon-radio'></i></label></td><td>";
+              html += full_add;
+              html += "</td></tr>";
+            }
+            jQuery('#ahead-data-stores').html(html);
+            jQuery('#results').hide();
+            jQuery('#results2').show();
+          },
+          error: function(err){
+            console.log("findAhead AJAX failed : " + err);
+          }
+        });
       }
     }
   });
@@ -106,10 +211,10 @@ jQuery(document).ready(function () {
   jQuery("#ahead_search.typeahead").typeahead({
     hint: true,
     highlight: true,
-    minLength: 1
+    minLength: 1,
   }, {
     source: engine.ttAdapter(),
-
+    
     // This will be appended to "tt-dataset-" to form the class name of the suggestion menu.
     name: 'medList',
 
@@ -128,9 +233,62 @@ jQuery(document).ready(function () {
       }
     }
   }).on('typeahead:selected', function () {
+    var key = jQuery("#ahead_search.typeahead").val();
+    jQuery("#image1").hide();
+    jQuery.ajax({
+      type: "GET",
+      url: "https://sih.pbehre.in/api/v3/alt/"+key,
+      crossdomain: true,
+      data: {key: key},
+      success: function(response){
+        data = showObject(response);
+        data = data[0];
+        html= "";
+        console.log(data);
+        for(var i=0; i<data.length; i++){
+          var name = data[i]['name'];
+          var price = data[i]['price'];
+          html += "<tr><td><label class='radio'><input type='radio' name='sub_ahead' value='find'><i class='icon-radio'></i></label></td>";
+          html += "<td>" + name + "</td>";
+          html += "<td>" + price + "</td></tr>";
+        }
+        jQuery('#ahead-data').html(html);
+        jQuery("#results").show();
+      },
+      error: function(err){
+        console.log('typeahead:selected ajax failed : ' + err);
+      }
+    });
+    
+  }).keyup(function() {
 
-  });
+    if (!this.value) {
+      jQuery("#results").hide();
+      jQuery("#results2").hide();
+      jQuery("#image1").show();
+    }
+
+});
   //line to fix typeahead padding issues
   jQuery('.twitter-typeahead').attr("style", "");
   //Search Code End
 });
+//iterate thru a json object having key:value
+function showObject(JSONobj) {
+  var result = [];
+  var it=0;
+  for (var p in JSONobj) {
+      if( JSONobj.hasOwnProperty(p) ) {
+          // result = JSONobj[p];
+          result[it]=JSONobj[p];
+          it++;
+      }
+  }
+  return result;
+}
+function navigate(){
+  var store_add = jQuery('input:radio[name=stores_ahead]:checked').closest('td').next('td').text();
+  //alert(store_add);
+  console.log(store_add);
+  launchnavigator.navigate("" + store_add);
+}

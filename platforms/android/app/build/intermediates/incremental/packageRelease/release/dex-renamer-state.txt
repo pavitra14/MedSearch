@@ -1,4 +1,0 @@
-#Thu Aug 30 23:24:17 IST 2018
-base.0=D\:\\Pavitra\\code\\Android\\MedHelper-1\\platforms\\android\\app\\build\\intermediates\\transforms\\dex\\release\\0
-renamed.0=classes.dex
-file.0=D\:\\Pavitra\\code\\Android\\MedHelper-1\\platforms\\android\\app\\build\\intermediates\\transforms\\dex\\release\\0\\classes.dex

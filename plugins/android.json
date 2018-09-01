@@ -13,13 +13,17 @@
     "cordova-plugin-camera": {
       "PACKAGE_NAME": "com.pbehre.medsearch"
     },
+    "cordova-plugin-customurlscheme": {
+      "URL_SCHEME": "emeds",
+      "ANDROID_SCHEME": " ",
+      "ANDROID_HOST": " ",
+      "ANDROID_PATHPREFIX": "/",
+      "PACKAGE_NAME": "com.pbehre.medsearch"
+    },
     "cordova-plugin-device": {
       "PACKAGE_NAME": "com.pbehre.medsearch"
     },
     "cordova-plugin-dialogs": {
-      "PACKAGE_NAME": "com.pbehre.medsearch"
-    },
-    "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.pbehre.medsearch"
     },
     "cordova-plugin-geolocation": {
@@ -31,12 +35,6 @@
     "cordova-plugin-inappbrowser": {
       "PACKAGE_NAME": "com.pbehre.medsearch"
     },
-    "cordova-plugin-network-information": {
-      "PACKAGE_NAME": "com.pbehre.medsearch"
-    },
-    "cordova-plugin-vibration": {
-      "PACKAGE_NAME": "com.pbehre.medsearch"
-    },
     "cordova-plugin-media-capture": {
       "PACKAGE_NAME": "com.pbehre.medsearch"
     },
@@ -44,19 +42,19 @@
       "ANDROID_SUPPORT_V4_VERSION": "27.+",
       "PACKAGE_NAME": "com.pbehre.medsearch"
     },
-    "cordova-plugin-splashscreen": {
+    "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.pbehre.medsearch"
     },
-    "cordova-plugin-customurlscheme": {
-      "URL_SCHEME": "emeds",
-      "ANDROID_SCHEME": " ",
-      "ANDROID_HOST": " ",
-      "ANDROID_PATHPREFIX": "/",
+    "uk.co.workingedge.phonegap.plugin.launchnavigator": {
+      "OKHTTP_VERSION": "3.+",
       "PACKAGE_NAME": "com.pbehre.medsearch"
     }
   },
   "dependent_plugins": {
     "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.pbehre.medsearch"
+    },
+    "cordova-plugin-actionsheet": {
       "PACKAGE_NAME": "com.pbehre.medsearch"
     }
   }

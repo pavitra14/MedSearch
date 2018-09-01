@@ -1,1 +1,4 @@
 /* Your app styles here */
+.tt-suggestions {
+    overflow-y: auto;
+  }

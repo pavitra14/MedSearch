@@ -1,5 +1,5 @@
 {
-  "_from": "cordova-plugin-media-capture@~1.4.3",
+  "_from": "cordova-plugin-media-capture@^1.4.3",
   "_id": "cordova-plugin-media-capture@1.4.3",
   "_inBundle": false,
   "_integrity": "sha1-IOO74zT7uJ9iSwIYjqxTcnQ5IPo=",
@@ -8,12 +8,12 @@
   "_requested": {
     "type": "range",
     "registry": true,
-    "raw": "cordova-plugin-media-capture@~1.4.3",
+    "raw": "cordova-plugin-media-capture@^1.4.3",
     "name": "cordova-plugin-media-capture",
     "escapedName": "cordova-plugin-media-capture",
-    "rawSpec": "~1.4.3",
+    "rawSpec": "^1.4.3",
     "saveSpec": null,
-    "fetchSpec": "~1.4.3"
+    "fetchSpec": "^1.4.3"
   },
   "_requiredBy": [
     "#USER",
@@ -21,7 +21,7 @@
   ],
   "_resolved": "https://registry.npmjs.org/cordova-plugin-media-capture/-/cordova-plugin-media-capture-1.4.3.tgz",
   "_shasum": "20e3bbe334fbb89f624b02188eac5372743920fa",
-  "_spec": "cordova-plugin-media-capture@~1.4.3",
+  "_spec": "cordova-plugin-media-capture@^1.4.3",
   "_where": "D:\\Pavitra\\code\\Android\\MedHelper-1",
   "author": {
     "name": "Apache Software Foundation"

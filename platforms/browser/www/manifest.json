@@ -1,8 +1,8 @@
 {
   "background_color": "#FFF",
   "display": "standalone",
-  "name": "MedHelper",
-  "short_name": "MedHelper",
+  "name": "MedSearch",
+  "short_name": "MedSearch",
   "version": "com.pbehre.medsearch",
   "description": "An application by Team Vijith",
   "author": "Team Vijith",

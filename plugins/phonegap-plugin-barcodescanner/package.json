@@ -1,27 +1,27 @@
 {
-  "_from": "phonegap-plugin-barcodescanner@8.0.0",
-  "_id": "phonegap-plugin-barcodescanner@8.0.0",
+  "_from": "phonegap-plugin-barcodescanner@7.1.0",
+  "_id": "phonegap-plugin-barcodescanner@7.1.0",
   "_inBundle": false,
-  "_integrity": "sha512-8mWI2bsCwkuvqCFdG7tBXdUH4X3Ay1uXpnjxCS/If8qJIbv1eaI2XMNHN+V2+YUemJoZC7chlF76YXjeQXVEFg==",
+  "_integrity": "sha512-E9cn3qZ6/DMwOT8P/TMkp3Js1kHzp2mRkvqQM/p4/TUiLRo29YN0+9APG5u3KeKNKBGp0fmH8Dtf76aHn0Cteg==",
   "_location": "/phonegap-plugin-barcodescanner",
   "_phantomChildren": {},
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "phonegap-plugin-barcodescanner@8.0.0",
+    "raw": "phonegap-plugin-barcodescanner@7.1.0",
     "name": "phonegap-plugin-barcodescanner",
     "escapedName": "phonegap-plugin-barcodescanner",
-    "rawSpec": "8.0.0",
+    "rawSpec": "7.1.0",
     "saveSpec": null,
-    "fetchSpec": "8.0.0"
+    "fetchSpec": "7.1.0"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/phonegap-plugin-barcodescanner/-/phonegap-plugin-barcodescanner-8.0.0.tgz",
-  "_shasum": "bdad5454bcbb1c27b0ded0bc5c646227e7a91f06",
-  "_spec": "phonegap-plugin-barcodescanner@8.0.0",
+  "_resolved": "https://registry.npmjs.org/phonegap-plugin-barcodescanner/-/phonegap-plugin-barcodescanner-7.1.0.tgz",
+  "_shasum": "6a52d13feb5c5197a7ab55ca18562b022e5f7d98",
+  "_spec": "phonegap-plugin-barcodescanner@7.1.0",
   "_where": "D:\\Pavitra\\code\\Android\\MedHelper-1",
   "author": {
     "name": "Adobe PhoneGap Team"
@@ -36,6 +36,8 @@
       "ios",
       "android",
       "windows",
+      "wp8",
+      "blackberry10",
       "browser"
     ]
   },
@@ -53,13 +55,6 @@
       "7.1.0": {
         "cordova": ">=7.1.0",
         "cordova-android": ">=6.3.0"
-      },
-      "8.0.0": {
-        "cordova": ">=7.1.0",
-        "cordova-android": ">=6.3.0"
-      },
-      "<7.0.0": {
-        "cordova-android": "<6.3.0"
       }
     }
   },
@@ -70,6 +65,8 @@
     "cordova-ios",
     "cordova-android",
     "cordova-windows",
+    "cordova-wp8",
+    "cordova-blackberry10",
     "cordova-browser",
     "cordova:plugin"
   ],
@@ -82,5 +79,5 @@
   "scripts": {
     "test": "jasmine-node --color spec"
   },
-  "version": "8.0.0"
+  "version": "7.1.0"
 }
