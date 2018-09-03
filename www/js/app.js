@@ -1,6 +1,6 @@
-var rank="";
-var sub="";
-var sub_price="";
+var rank = "";
+var sub = "";
+var sub_price = "";
 if (localStorage.getItem("LocalData") == null) {
   var data = [];
   data = JSON.stringify(data);
@@ -19,12 +19,11 @@ function handleOpenURL(url) {
   data = JSON.parse(data);
   data[data.length] = [moment().format('lll'), qr];
   localStorage.setItem("LocalData", JSON.stringify(data));
-  a.fetchPresData(JSON.stringify(data));
+  a.fetchPresData();
   app.f7.router.navigate({
     url: '/prescriptions/'
   });
 }
-
 
 jQuery.noConflict();
 // jQuery Code
@@ -49,6 +48,9 @@ jQuery(document).ready(function () {
   Vue.component('page-not-found', {
     template: '#page-not-found'
   });
+  Vue.component('stores', {
+    template: '#stores'
+  });
   //Routes for the application
   var routes = [{
       path: '/about/',
@@ -65,9 +67,13 @@ jQuery(document).ready(function () {
       url: 'https://sih.pbehre.in/'
     },
     {
+      path: '/stores/',
+      component: 'stores'
+    },
+    {
       path: '(.*)',
       component: 'page-not-found',
-    },
+    }
   ];
   // Init App
   var a = new Vue({
@@ -101,17 +107,17 @@ jQuery(document).ready(function () {
                 localStorage.setItem("LocalData", data);
               }
               var data = localStorage.getItem("LocalData");
-             
+
               // if(data != null) {
               //   data = JSON.parse(data);
               // } else {
               //   data = JSON.parse("[]");
               // }
-              data = JSON.parse(data);             
-              data[data.length] = [moment().format('lll'), value];              
+              data = JSON.parse(data);
+              data[data.length] = [moment().format('lll'), value];
               localStorage.setItem("LocalData", JSON.stringify(data));
               alert("Scan successful, fetching data. ");
-              a.fetchPresData(JSON.stringify(data));
+              a.fetchPresData();
               app.f7.router.navigate({
                 url: '/prescriptions/'
               });
@@ -137,54 +143,51 @@ jQuery(document).ready(function () {
       openLogin: function (event) {
         cordova.InAppBrowser.open('https://sih.pbehre.in/login.php', '_blank', 'location=yes');
       },
-      fetchPresData: function (data) {
+      fetchPresData: function () {
+        jQuery("table#allTable tbody").empty();
+
+        var data = localStorage.getItem("LocalData");
         console.log(data);
         data = JSON.parse(data);
-    
+
+        //let's see what all things we need to display in each prescription here
+
         var html = "";
 
-        for(var count1 = 0; count1 < data.length; count1++)
-        {
-            var qrcode=data[count1][1];//store the qr code in this variable as a string
-            var requestUrl="https://sih.pbehre.in/api/v2/qrcode/"+qrcode;
-            jQuery.ajax({
-              type: "GET",
-              crossdomain: true,
-              url: requestUrl,
-              data: data,
-              success: function(response) {
-                console.log(response);
-              },
-              error: function(err) {
-                console.log("fetchPresData AJAX failed : " + err);
-              }
-            });
+        for (var count1 = 0; count1 < data.length; count1++) {
+          var qrcode = data[count1][1]; //store the qr code in this variable as a string
+          //var requestUrl="http://192.168.43.105/sih/api/v2/qrcode/"+qrcode;
+          var requestUrl = "https://sih.pbehre.in/api/v2/qrcode/" + qrcode;
 
+          // alert("requestUrl :::::"+requestUrl);    
+          sendAjaxPres(requestUrl, 'GET', data, count1);
         }
 
       },
-      findAhead: function(){
-        var sub = jQuery('input:radio[name=sub_ahead]:checked').closest('td').next('td').map(function(){
+      findAhead: function () {
+        var sub = jQuery('input:radio[name=sub_ahead]:checked').closest('td').next('td').map(function () {
           return jQuery(this).text();
         }).get();
-        var sub_price = jQuery('input:radio[name=sub_ahead]:checked').closest('td').next('td').next('td').map(function(){
+        var sub_price = jQuery('input:radio[name=sub_ahead]:checked').closest('td').next('td').next('td').map(function () {
           return jQuery(this).text();
         }).get();
         jQuery.ajax({
           type: "GET",
           crossdomain: true,
-          url: "https://sih.pbehre.in/api/v3/findAhead/"+sub,
-          data: {key: sub},
-          success: function(response){
+          url: "https://sih.pbehre.in/api/v3/findAhead/" + sub,
+          data: {
+            key: sub
+          },
+          success: function (response) {
             data = showObject(response);
             console.log(data);
             var html = "";
-            for(var i=0; i<data.length; i++){
+            for (var i = 0; i < data.length; i++) {
               var storeName = data[i][0]['name'] + ", ";
               var storeAdd = data[i][0]['address'] + ", India";
               var full_add = storeName + storeAdd;
 
-              html +="<tr><td><label class='radio'><input type='radio' name='stores_ahead'><i class='icon-radio'></i></label></td><td>";
+              html += "<tr><td><label class='radio'><input type='radio' name='stores_ahead'><i class='icon-radio'></i></label></td><td>";
               html += full_add;
               html += "</td></tr>";
             }
@@ -192,7 +195,7 @@ jQuery(document).ready(function () {
             jQuery('#results').hide();
             jQuery('#results2').show();
           },
-          error: function(err){
+          error: function (err) {
             console.log("findAhead AJAX failed : " + err);
           }
         });
@@ -214,7 +217,7 @@ jQuery(document).ready(function () {
     minLength: 1,
   }, {
     source: engine.ttAdapter(),
-    
+
     // This will be appended to "tt-dataset-" to form the class name of the suggestion menu.
     name: 'medList',
 
@@ -237,15 +240,17 @@ jQuery(document).ready(function () {
     jQuery("#image1").hide();
     jQuery.ajax({
       type: "GET",
-      url: "https://sih.pbehre.in/api/v3/alt/"+key,
+      url: "https://sih.pbehre.in/api/v3/alt/" + key,
       crossdomain: true,
-      data: {key: key},
-      success: function(response){
+      data: {
+        key: key
+      },
+      success: function (response) {
         data = showObject(response);
         data = data[0];
-        html= "";
+        html = "";
         console.log(data);
-        for(var i=0; i<data.length; i++){
+        for (var i = 0; i < data.length; i++) {
           var name = data[i]['name'];
           var price = data[i]['price'];
           html += "<tr><td><label class='radio'><input type='radio' name='sub_ahead' value='find'><i class='icon-radio'></i></label></td>";
@@ -255,12 +260,12 @@ jQuery(document).ready(function () {
         jQuery('#ahead-data').html(html);
         jQuery("#results").show();
       },
-      error: function(err){
+      error: function (err) {
         console.log('typeahead:selected ajax failed : ' + err);
       }
     });
-    
-  }).keyup(function() {
+
+  }).keyup(function () {
 
     if (!this.value) {
       jQuery("#results").hide();
@@ -268,7 +273,7 @@ jQuery(document).ready(function () {
       jQuery("#image1").show();
     }
 
-});
+  });
   //line to fix typeahead padding issues
   jQuery('.twitter-typeahead').attr("style", "");
   //Search Code End
@@ -276,19 +281,240 @@ jQuery(document).ready(function () {
 //iterate thru a json object having key:value
 function showObject(JSONobj) {
   var result = [];
-  var it=0;
+  var it = 0;
   for (var p in JSONobj) {
-      if( JSONobj.hasOwnProperty(p) ) {
-          // result = JSONobj[p];
-          result[it]=JSONobj[p];
-          it++;
-      }
+    if (JSONobj.hasOwnProperty(p)) {
+      // result = JSONobj[p];
+      result[it] = JSONobj[p];
+      it++;
+    }
   }
   return result;
 }
-function navigate(){
+
+function navigate() {
   var store_add = jQuery('input:radio[name=stores_ahead]:checked').closest('td').next('td').text();
   //alert(store_add);
   console.log(store_add);
+  launchnavigator.navigate("" + store_add);
+}
+
+function sendAjaxPres(url, method, data, count1) {
+  //alert(url);
+  jQuery.ajax({
+    type: method,
+    crossDomain: true,
+    url: url,
+    data: data,
+    success: function (response) {
+
+      var html = "";
+
+      var arrJSON = JSON.parse(response);
+
+      var valuesArrForMedicine = showObject(arrJSON.medicines);
+      var valuesArrForMedicinePrice = showObject(arrJSON.m_price);
+      var valuesArrForSubstitutes = showObject(arrJSON.subtitutes);
+
+      var prescribedMedicine = "";
+      for (var i = 0; i < valuesArrForMedicine.length; i++) {
+        prescribedMedicine += "<strong><tr>" +
+          "<strong><td colspan='2'>(" + (i + 1) + ")&nbsp;&nbsp;" + valuesArrForMedicine[i] + "</td>" +
+          "<td>" + valuesArrForMedicinePrice[i] + "</td></strong></tr></strong><tr><td>Substitutes:</td><td></td></tr>";
+
+        for (var j = 0; j < valuesArrForSubstitutes[i].length; j++) {
+
+          prescribedMedicine += "(" + (j + 1) + ")<tr><td><label class='checkbox'><input type='checkbox' name='sub' value='find'><i class='icon-checkbox'></i>" + valuesArrForSubstitutes[i][j].name + "</label></td>" +
+            "<td>" + valuesArrForSubstitutes[i][j].price + "</td></tr>";
+
+        }
+
+
+      }
+
+
+      var storeAddress = arrJSON.stores_details["1"][0].name + ", ";
+      storeAddress += arrJSON.stores_details["1"][0].address + ", India";
+
+      var valuesArrForStoresAvail = showObject(arrJSON.stores_av);
+      var valuesArrForStoreDetails = showObject(arrJSON.stores_details);
+
+      html +=
+
+        +"<tr><td></td></tr>" +
+        "<tr><td><label class='radio'>"+(count1+1)+"<input type='radio' name='finding' value='find'><i class='icon-radio'></i></td><td>" + data[count1][0] + "</td></label></tr>" +
+        "<tr><td>Name</td><td>Price</td></tr>" +
+        prescribedMedicine;
+
+
+      if (count1 == data.length - 1) {
+        html += "<tr/><td><br></td><tr/>";
+      }
+      jQuery("table#allTable tbody").append(html);
+
+
+    },
+    error: function (response) {
+      return response;
+    }
+  });
+}
+function findStores(){
+  var findThisIndex=jQuery('input:radio[name=finding]:checked').closest('td').text();
+        //sub = $('input:radio[name=sub]:checked').closest('td').text();
+        sub = jQuery('input:checkbox[name=sub]:checked').closest('td').map(function(){
+            return jQuery(this).text();
+          }).get(); // <----
+        sub_price = jQuery('input:checkbox[name=sub]:checked').closest('td').next('td').map(function(){
+            return jQuery(this).text();
+          }).get(); // <----
+       
+        var trueIndex=findThisIndex-1;
+        var data = localStorage.getItem("LocalData");
+        data = JSON.parse(data);
+        rank=data[trueIndex];
+        var requestUrl="https://sih.pbehre.in/api/v2/qrcode/"+rank[1];
+        sendAjaxStores(requestUrl,'GET',data);
+        app.f7.router.navigate({
+          url: '/stores/'
+        });
+
+}
+function sendAjaxStores(url, method, data) {
+  //alert(url);
+  jQuery.ajax({
+    type: method,
+    crossDomain: true,
+    url: url,
+    data: data,
+    success: function (response) {
+      //alert(response);
+      // alert("just below success function_alert3");
+      var html = "";
+
+      var arrJSON = JSON.parse(response);
+
+      var valuesArrForMedicine = showObject(arrJSON.medicines);
+      var valuesArrForMedicinePrice = showObject(arrJSON.m_price);
+
+      var prescribedMedicine = "";
+
+
+      var storeAddress = arrJSON.stores_details["1"][0].name + ", ";
+      storeAddress += arrJSON.stores_details["1"][0].address + ", India";
+
+      var valuesArrForStoresAvail = showObject(arrJSON.stores_av);
+      var valuesArrForStoreDetails = showObject(arrJSON.stores_details);
+
+      var store1 = [],
+        store2 = [],
+        k = 0,
+        l = 0;
+
+      var storesDetails = [
+        [],
+        []
+      ];
+
+      for (var i = 0; i < valuesArrForStoresAvail.length; i++) {
+        for (var j = 0; j < valuesArrForStoresAvail[i].length; j++) {
+          for (var m = 0; m < valuesArrForStoreDetails.length; m++) {
+            if (valuesArrForStoresAvail[i][j] == m + 1) {
+              storesDetails[m].push(valuesArrForMedicine[i]);
+            }
+          }
+        }
+      }
+      var htmlRadioEdit = numberOfStores1(showObject(arrJSON.stores_details), storesDetails, sub, sub_price, arrJSON);
+
+      html += +"<tr><td></td></tr>" +
+        htmlRadioEdit;
+
+      // if(count1==data.length-1){
+      //     html+="<tr/><td><br></td><tr/>";
+      // }
+      jQuery("table#allTableNew tbody").append(html);
+
+
+    },
+    error: function (response) {
+      return response;
+    }
+  });
+}
+
+function calcQTY(consumption, number, duration) {
+  var cons;
+  cons = {
+    "Once in a day": 1,
+    "Empty stomach": 1,
+    "After breakfast": 1,
+    "After lunch": 1,
+    "Before lunch": 1,
+    "After dinner": 1,
+    "Before dinner": 1,
+    "Twice daily after meal": 2,
+    "Twice daily before meal": 2,
+    "Thrice daily after meal": 3,
+    "Thrice daily before meal": 3,
+    "Four times daily after meal": 4,
+    "Four times daily before meal": 4,
+    "Once in a week": 1
+  };
+  var dur;
+  dur = {
+    "Days": 1,
+    "Weeks": 7,
+    "Months": 30
+  };
+  var dailyNo;
+  dailyNo = cons[consumption];
+  var qty;
+  qty = dailyNo * number * dur[duration];
+  return qty;
+}
+
+function getSum(total, num) {
+  return total + num;
+}
+
+function numberOfStores1(valuesArrForStoreDetail, storesDetails, sub, sub_price, arrJSON) {
+  var htmlRadioEdit = "<thead><tr>" +
+    "<th><strong>Medicines</strong></th> <th><strong>Price<strong></th><th><strong>Quantity</strong></th><th><strong>Amount</strong></th>" +
+    "</tr>";
+
+  var cons = arrJSON['pres_details']['consumption'];
+  var no = arrJSON['pres_details']['number'];
+  var dur = arrJSON['pres_details']['duration'];
+  var total = [];
+  for (var i = 0; i < sub.length; i++) {
+    var qty = calcQTY(cons[i], no[i], dur[i]);
+    var amt = qty * sub_price[i];
+    total.push(amt);
+    htmlRadioEdit += "<tr><td>" + sub[i] + "</td><td>Rs. " + sub_price[i] + "</td><td>" + qty + "</td><td>Rs. " + amt + "</td></tr>";
+  }
+  var sum = total.reduce(getSum);
+  htmlRadioEdit += "<tr><td colspan='3'><strong>Approximate Total: </strong></td><td>Rs. " + sum + "</td></tr>";
+  for (var i = 0; i < valuesArrForStoreDetail.length; i++) {
+    var name = valuesArrForStoreDetail[i][0].name;
+    var storeAddress = valuesArrForStoreDetail[i][0].name + ", ";
+    storeAddress += valuesArrForStoreDetail[i][0].address + ", India";
+    htmlRadioEdit += "";
+    htmlRadioEdit += "<tr><td><label class='radio'><input type='radio' name='finding_stores'><i class='icon-radio'></i></label></td><td>";
+    htmlRadioEdit += storeAddress;
+    htmlRadioEdit += "</td></tr>";
+    /*if(valuesArrForStoreDetail[i+1][0].name == name) {
+        break;
+    }*/
+    if (i == valuesArrForStoreDetail.length - 1) {
+      htmlRadioEdit += "<tr style='border-bottom:4px solid black'><td colspan='100%'></td></tr><br><br><br>"
+    }
+  }
+  return htmlRadioEdit;
+}
+function navigatePres() {
+  var store_add = jQuery('input:radio[name=finding_stores]:checked').closest('td').next('td').text();
+  
+  //console.log(store_add);
   launchnavigator.navigate("" + store_add);
 }

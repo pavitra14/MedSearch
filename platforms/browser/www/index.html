@@ -41,7 +41,7 @@
           <f7-navbar title="MedSearch"></f7-navbar>
           <f7-block-title>Actions</f7-block-title>
           <f7-list>
-            <f7-list-item link="/prescriptions/" title="View Prescriptions" view="#main-view" panel-close></f7-list-item>
+            <f7-list-item link="/prescriptions/" title="View Prescriptions" view="#main-view" panel-close v-on:click="fetchPresData"></f7-list-item>
             <f7-list-item title="Login to Cloud" view="#main-view" panel-close v-on:click="openLogin"></f7-list-item>
           </f7-list>
         </f7-page>
@@ -119,33 +119,58 @@
 
   </div>
 
-  <!-- About Page Template -->
-  <template id="page-about">
-    <f7-page>
-      <f7-navbar title="About" back-link="Back"></f7-navbar>
-      <f7-block-title>About My App</f7-block-title>
-      <f7-block strong>
-        <p>Here is About page!</p>
-        <p>You can go <f7-link back>back</f7-link>.</p>
-        <p>Mauris posuere sit amet metus id venenatis. Ut ante dolor, tempor nec commodo rutrum, varius at sem. Nullam ac nisi non neque ornare pretium. Nulla mauris mauris, consequat et elementum sit amet, egestas sed orci. In hac habitasse platea dictumst.</p>
-        <p>Fusce eros lectus, accumsan eget mi vel, iaculis tincidunt felis. Nulla tincidunt pharetra sagittis. Fusce in felis eros. Nulla sit amet aliquam lorem, et gravida ipsum. Mauris consectetur nisl non sollicitudin tristique. Praesent vitae metus ac quam rhoncus mattis vel et nisi. Aenean aliquet, felis quis dignissim iaculis, lectus quam tincidunt ligula, et venenatis turpis risus sed lorem. Morbi eu metus elit. Ut vel diam dolor.</p>
-      </f7-block>
-    </f7-page>
-  </template>
-
-  <!-- Form Page Template -->
+  <!-- pres Page Template -->
   <template id="prescriptions">
     <f7-page>
-      <f7-navbar title="Prescriptions" back-link="Back"></f7-navbar>
-      <f7-block-title>Radio buttons group</f7-block-title>
-      <f7-list form>
-        <f7-list-item v-for="n in 3" :key="n" radio name="my-radio" :checked="n === 1" :value="n" :title="'Radio ' + n"></f7-list-item>
-      </f7-list>
-
+      <f7-navbar title="Prescriptions" back-link="Back">
+        <f7-nav-right>
+         <!-- <button> as button -->
+          <button class="col button color-blue" onclick="findStores()">Find Stores</button>
+        </f7-nav-right>
+      </f7-navbar>
+      
+      <f7-block>
+        <div class="data-table card">
+          <table id="allTable">
+            <thead>
+              <tr>
+                <div class="card-header">My Prescriptions</div>
+              </tr>
+              </thead>
+              <tbody id="tableBody">
+              </tbody>
+           </table>      
+        </div>
+      </f7-block>
       
     </f7-page>
   </template>
 
+<!-- stores Page Template -->
+<template id="stores">
+  <f7-page>
+    <f7-navbar title="Stores" back-link="Back">
+      <f7-nav-right>
+        <f7-button class="col" outline onclick="navigatePres()">Navigate</f7-button>
+      </f7-nav-right>
+    </f7-navbar>
+    
+    <f7-block>
+      <div class="data-table card">
+        <table id="allTableNew">
+          <thead>
+            <tr>
+              <div class="card-header">Stores:</div>
+            </tr>
+            </thead>
+            <tbody id="tableBodyNew">
+            </tbody>
+         </table>      
+      </div>
+    </f7-block>
+    
+  </f7-page>
+</template>
   
 
   <!-- Page Not Found Template -->
